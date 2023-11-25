@@ -2,7 +2,7 @@ Project Instructions
 How to run the application locally
 Clone the project
 
-git clone https:
+git clone https: https://level-2-mongoosemaster-exam-g72z2lvjg-soriful15.vercel.app
 Go to the project directory
 
 cd my-project
