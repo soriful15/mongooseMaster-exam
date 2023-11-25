@@ -36,4 +36,4 @@ http://localhost:7000/api/users/:userId/orders
 http://localhost:7000/api/users/:userId/orders
 -Get specific user orders total price
 
-http://localhost:
+http://localhost:7000/api/users/1/orders/total-price
