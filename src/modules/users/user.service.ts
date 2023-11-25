@@ -90,6 +90,22 @@ const getAllOrderToUserCollection = async (userId: number | string) => {
   return result;
 };
 
+const calculateAllOrderToUserCollection = async (userId: number | string) => {
+  const userExists = await User.isUserExists(userId);
+  if (!userExists) {
+    throw new Error('User not found ');
+  }
+  const result = await User.findOne({ userId }).select('orders');
+
+  const totalPrice = (result?.orders || []).reduce(
+    (total: number, order: { price?: number; quantity: number }) => {
+      return total + (order.price || 0) * (order.quantity || 0);
+    },
+    0,
+  );
+  return totalPrice;
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUserFromDB,
@@ -98,4 +114,5 @@ export const UserServices = {
   deleteUserFromDB,
   insertOrderToUserCollection,
   getAllOrderToUserCollection,
+  calculateAllOrderToUserCollection,
 };
