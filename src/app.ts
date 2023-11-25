@@ -10,7 +10,7 @@ app.use(cors());
 app.use('/api', usersRoutes);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
+  res.send('Server Running on port 7000');
 });
 
 export default app;
