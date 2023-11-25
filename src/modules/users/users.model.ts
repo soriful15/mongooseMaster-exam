@@ -1,8 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { TUser } from './users.interface';
-import validator from 'validator';
+import { TUser, UserModel } from './users.interface';
 
-const userSchema = new Schema<TUser>({
+const userSchema = new Schema<TUser, UserModel>({
   userId: {
     type: Number,
     required: [true, 'userId is required'],
@@ -18,38 +17,24 @@ const userSchema = new Schema<TUser>({
     required: [true, 'password is required'],
     maxlength: [20, ' password can not be more than 20 Characters'],
   },
+
   fullName: {
     firstName: {
       type: String,
       required: [true, 'First Name is Required'],
-      trim: true,
       maxlength: [20, 'Name can not be more than 20 Characters'],
-      validate: {
-        validator: {
-          validator: (value: string) => validator.isAlpha(value),
-          message: '{VALUE} is not a valid',
-        },
-      },
     },
     lastName: {
       type: String,
       required: [true, 'Last Name is Required'],
-      trim: true,
       maxlength: [20, 'Name can not be more than 20 Characters'],
-      validate: {
-        validator: (value: string) => validator.isAlpha(value),
-        message: '{VALUE} is not a valid',
-      },
     },
   },
+
   age: { type: Number, required: [true, 'Age is required'] },
   email: {
     type: String,
     required: [true, 'email is required'],
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is not a valid',
-    },
   },
   isActive: {
     type: Boolean,
@@ -91,4 +76,10 @@ const userSchema = new Schema<TUser>({
   ],
 });
 
-export const User = model<TUser>('User', userSchema);
+// user exist or not static method
+userSchema.statics.isUserExists = async function (userId: number | string) {
+  const existingUser = await User.findOne({ userId });
+  return existingUser;
+};
+
+export const User = model<TUser, UserModel>('User', userSchema);
