@@ -7,4 +7,7 @@ router.get('/users', UserControllers.getAllUser);
 router.get('/users/:userId', UserControllers.getSingleUser);
 router.put('/users/:userId', UserControllers.updateUser);
 router.delete('/users/:userId', UserControllers.deleteUser);
+router.put('/users/:userId/orders', UserControllers.insertOrder);
+router.get('/users/:userId/orders', UserControllers.getUserOrder);
+
 export const usersRoutes = router;

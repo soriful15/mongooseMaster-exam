@@ -4,7 +4,7 @@ import userZodSchema from './users.Zodvalidation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const userData = req.body;
+    const { user: userData } = req.body;
     // zod validation data
     const zodParseData = userZodSchema.parse(userData);
     const result = await UserServices.createUserIntoDB(zodParseData);
@@ -116,10 +116,61 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
+// insert a order
+const insertOrder = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const order = req.body;
+    const result = await UserServices.insertOrderToUserCollection(
+      userId,
+      order,
+    );
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully!',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'User not found',
+      error: {
+        code: 404,
+        description: 'User not found!',
+        error: error,
+      },
+    });
+  }
+};
+
+const getUserOrder = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.getAllOrderToUserCollection(userId);
+    res.status(200).json({
+      success: true,
+      message: 'Order fetched successfully!',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'User not found',
+      error: {
+        code: 404,
+        description: 'User not found!',
+        error: error,
+      },
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUser,
   getSingleUser,
   updateUser,
   deleteUser,
+  insertOrder,
+  getUserOrder,
 };

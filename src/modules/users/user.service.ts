@@ -57,10 +57,45 @@ const deleteUserFromDB = async (userId: number | string) => {
   return result;
 };
 
+// insert a order to specific user collection
+const insertOrderToUserCollection = async (
+  userId: number | string,
+  orderData: {
+    productName: string;
+    price: number;
+    quantity: number;
+  },
+) => {
+  const userExists = await User.isUserExists(userId);
+  if (!userExists) {
+    throw new Error('User not found');
+  }
+  const { productName, price, quantity } = orderData;
+  const result = await User.findOneAndUpdate(
+    { userId, orders: { $exists: true } },
+    { $push: { orders: { productName, price, quantity } } },
+    { upsert: true, new: true },
+  );
+  return result;
+};
+
+// get a user all orders
+
+const getAllOrderToUserCollection = async (userId: number | string) => {
+  const userExists = await User.isUserExists(userId);
+  if (!userExists) {
+    throw new Error('User not found ');
+  }
+  const result = await User.findOne({ userId }).select('orders');
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUserFromDB,
   getSingleUserFromDB,
   updatedUserFromDB,
   deleteUserFromDB,
+  insertOrderToUserCollection,
+  getAllOrderToUserCollection,
 };
