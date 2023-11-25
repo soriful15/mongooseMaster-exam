@@ -17,12 +17,17 @@ const getAllUserFromDB = async () => {
   return result;
 };
 
-// const getSingleUserDB = async (userId: string | number) => {
-
-// };
+const getSingleUserFromDB = async (userId: number | string) => {
+  const userExists = await User.isUserExists(userId);
+  if (!userExists) {
+    throw new Error('User not found');
+  }
+  const result = User.findOne({ userId });
+  return result;
+};
 
 export const UserServices = {
   createUserIntoDB,
   getAllUserFromDB,
-  // getSingleUserDB,
+  getSingleUserFromDB,
 };
