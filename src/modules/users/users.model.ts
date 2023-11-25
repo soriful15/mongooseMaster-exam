@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { TUser, UserModel } from './users.interface';
-
+import bcrypt from 'bcrypt';
+import config from '../../app/config';
 const userSchema = new Schema<TUser, UserModel>({
   userId: {
     type: Number,
@@ -76,10 +77,28 @@ const userSchema = new Schema<TUser, UserModel>({
   ],
 });
 
+// mongoose pre middleware for hashing password
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+// delete password field when response
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
+
 // user exist or not static method
 userSchema.statics.isUserExists = async function (userId: number | string) {
   const existingUser = await User.findOne({ userId });
   return existingUser;
 };
 
-export const User = model<TUser, UserModel>('User', userSchema);
+export const User = model<TUser, UserModel>('user', userSchema);
